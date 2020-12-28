@@ -14,7 +14,7 @@ func main() {
 	}))
 
 	svc := sqs.New(sess)
-	queueURL := "https://sqs.eu-west-2.amazonaws.com/886197426502/kitty"
+	queueURL := ""
 	msgResult, err := svc.ReceiveMessage(&sqs.ReceiveMessageInput{
 		AttributeNames: []*string{
 			aws.String(sqs.MessageSystemAttributeNameSentTimestamp),
