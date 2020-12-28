@@ -1,6 +1,8 @@
 package main
 
 import (
+	"flag"
+	"fmt"
 	"log"
 
 	"github.com/aws/aws-sdk-go/aws"
@@ -8,13 +10,23 @@ import (
 	"github.com/aws/aws-sdk-go/service/sqs"
 )
 
+var (
+	queueURL = flag.String("q", "", "The name of the queue")
+)
+
 func main() {
+	flag.Parse()
+	if *queueURL == "" {
+		fmt.Println("You must supply the name of a queue (-q QUEUE)")
+		return
+	}
+
 	sess := session.Must(session.NewSessionWithOptions(session.Options{
 		SharedConfigState: session.SharedConfigEnable,
 	}))
 
 	svc := sqs.New(sess)
-	queueURL := "https://sqs.eu-west-2.amazonaws.com/886197426502/kitty"
+
 	_, err := svc.SendMessage(&sqs.SendMessageInput{
 		DelaySeconds: aws.Int64(10),
 		MessageAttributes: map[string]*sqs.MessageAttributeValue{
@@ -32,7 +44,7 @@ func main() {
 			},
 		},
 		MessageBody: aws.String("Information about current NY Times fiction bestseller for week of 12/11/2016."),
-		QueueUrl:    &queueURL,
+		QueueUrl:    queueURL,
 	})
 
 	if err != nil {
